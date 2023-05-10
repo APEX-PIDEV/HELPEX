@@ -59,7 +59,9 @@ class CentreController extends AbstractController
         ]);
     }
     //***mobilejson**
-    #[Route("/deletecentrejson/{id}", name: "deletecentrejson")]
+    /**
+     * @Route("/deletecentrejson/{id}", name="delete_centre_json")
+     */
     public function deletecentrejson(Request $req, $id, NormalizerInterface $Normalizer)
     {
 
@@ -106,8 +108,10 @@ class CentreController extends AbstractController
         $centreNormalises = $normalizer->normalize($centre, 'json', ['groups' => "post:read"]);
         return new Response(json_encode($centreNormalises));
     }
+    /**
+     * @Route("/updatecentrejson/{id}", name="update_centre_json")
+     */
 
-    #[Route("/updatecentrejson/{id}", name: "updatecentrejson")]
     public function updateCentreJSON(Request $request, $id, NormalizerInterface $Normalizer)
     {
 

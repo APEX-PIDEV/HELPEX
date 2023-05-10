@@ -6,6 +6,7 @@ use App\Repository\FormationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
@@ -14,10 +15,12 @@ class Formation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[groups ("post:read")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank (message:'champ obligatoire')]
+    #[groups ("post:read")]
     private ?string $nomFormation = null;
 
     #[ORM\Column(length: 500)]
@@ -28,27 +31,33 @@ class Formation
         minMessage: 'insuffisant {{ limit }}',
         maxMessage: 'trop long {{ limit }} ',
     )]
+    #[groups ("post:read")]
     private ?string $descriptionFormation = null;
 
     #[ORM\Column]
     #[Assert\NotBlank (message:'champ obligatoire')]
     #[Assert\Positive]
+    #[groups ("post:read")]
+
     private ?float $coutFormation = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\NotBlank (message:'champ obligatoire')]
     #[Assert\Positive]
+    #[groups ("post:read")]
     private ?int $NombreDePlace = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\NotBlank (message:'champ obligatoire')]
     #[Assert\Positive]
+    #[groups ("post:read")]
     private ?string $duree = null;
 
     #[ORM\ManyToOne(inversedBy: 'formations')]
     private ?CategorieFormation $idCategorieFormation = null;
 
     #[ORM\ManyToOne(inversedBy: 'formations')]
+    // #[groups ("post:read")]
     private ?Centre $idCentre = null;
 
     #[ORM\OneToMany(mappedBy: 'formations', targetEntity: InscriptionFormation::class)]

@@ -8,16 +8,22 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use http\Message;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CentreRepository::class)]
 class Centre
 {
     #[ORM\Id]
+
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[groups ("post:read")]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[groups ("post:read")]
+
     #[Assert\NotBlank (message:'champ obligatoire')]
     #[Assert\Length(
         min: 2,
@@ -29,11 +35,15 @@ class Centre
     private ?string $nomCentre = null;
 
     #[ORM\Column(length: 255)]
+    #[groups ("post:read")]
+
     #[Assert\NotBlank (message:'champ obligatoire')]
 
     private ?string $adresseCentre = null;
 
     #[ORM\Column(length: 255)]
+    #[groups ("post:read")]
+
     #[Assert\NotBlank (message:'champ obligatoire')]
     #[Assert\Email(
         message: 'The email {{ value }} is not a valid email.',
@@ -45,6 +55,8 @@ class Centre
     private ?string $emailCentre = null;
 
     #[ORM\Column]
+    #[groups ("post:read")]
+
     #[Assert\NotBlank (message:'champ obligatoire')]
     #[Assert\Length(
         min: 8,
@@ -55,10 +67,12 @@ class Centre
     private ?int $telephoneCentre = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Url]
+    #[groups ("post:read")]
+    // #[Assert\Url]
     private ?string $siteWebCentre = null;
 
-    #[ORM\OneToMany(mappedBy: 'idCentre', targetEntity: Formation::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'idCentre', targetEntity: Formation::class, orphanRemoval: true )]
+
     private Collection $formations;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -167,6 +181,7 @@ class Centre
     {
         return $this->getNomCentre();
     }
+
     public function getImagecentre(): ?string
     {
         return $this->imagecentre;

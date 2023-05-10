@@ -11,11 +11,85 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/formation')]
 class FormationController extends AbstractController
 {
+    //****************mobile
+
+
+    #[Route('/allformation', name: 'mobileafficherformation', methods: ['GET'])]
+    public function indexjson(NormalizerInterface $Normalizer): Response
+    {
+        $respository=$this->getDoctrine()->getRepository(Formation::class);
+        $centres=$respository->findAll();
+        $jsonContent=$Normalizer->normalize($centres,'json',['groups'=>'post:read']);
+        return  new Response(json_encode($jsonContent));
+    }
+
+    #[Route('/ajouterformationjson',name:'mobileajouterformation',methods: ['GET','POST'])]
+    public function addcentrejson(Request $request,NormalizerInterface $Normalizer)
+    {
+        //http://127.0.0.1:8000/formation/ajouterformationjson?nomFormation=qsd&descriptionFormation=hgv&coutFormation=22&NombreDePlace=77&duree=7ormation=sdfgsf
+        $em=$this->getDoctrine()->getManager();
+        $centre=new Formation();
+        $centre->setNomFormation($request->get('nomFormation'));
+        $centre->setDescriptionFormation($request->get('descriptionFormation'));
+        $centre->setCoutFormation($request->get('coutFormation'));
+        $centre->setNombreDePlace($request->get('NombreDePlace'));
+        $centre->setDuree($request->get('duree'));
+        $em->persist($centre);
+        $em->flush();
+        $jsonContent=$Normalizer->normalize($centre,'json',['groups'=>'post:read']);
+        return new Response(json_encode($jsonContent));
+
+
+    }
+
+    #[Route("/formationjson/{id}", name: "formationid", methods: ['GET'])]
+    public function CentreId($id, NormalizerInterface $normalizer, FormationRepository $repo)
+    {
+        $centre = $repo->find($id);
+        $centreNormalises = $normalizer->normalize($centre, 'json', ['groups' => "post:read"]);
+        return new Response(json_encode($centreNormalises));
+    }
+
+
+    #[Route("/deleteformationjson/{id}", name: "deleteformationjson")]
+    public function deletecentrejson(Request $req, $id, NormalizerInterface $Normalizer)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $centre = $em->getRepository(Formation::class)->find($id);
+        $em->remove($centre);
+        $em->flush();
+        $jsonContent = $Normalizer->normalize($centre, 'json', ['groups' => "post:read"]);
+        return new Response("formation deleted successfully " . json_encode($jsonContent));
+    }
+    #[Route("/updateformationjson/{id}", name: "updateformationjson")]
+    public function updateCentreJSON(Request $request, $id, NormalizerInterface $Normalizer)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $centre = $em->getRepository(Formation::class)->find($id);
+        $centre->setNomFormation($request->get('nomFormation'));
+        $centre->setDescriptionFormation($request->get('descriptionFormation'));
+        $centre->setCoutFormation($request->get('coutFormation'));
+        $centre->setNombreDePlace($request->get('NombreDePlace'));
+        $centre->setDuree($request->get('duree'));
+
+        $em->flush();
+
+        $jsonContent = $Normalizer->normalize($centre, 'json', ['groups' => "post:read"]);
+        return new Response("foramtion updated successfully " . json_encode($jsonContent));
+    }
+
+    //*******************
+
+
+
     #[Route('/', name: 'app_formation_index', methods: ['GET']), IsGranted('ROLE_ADMIN')]
     public function index(FormationRepository $formationRepository): Response
     {
@@ -72,9 +146,9 @@ class FormationController extends AbstractController
 
                 $formation->setIamgeformation($newFilename);
             }
-                $formationRepository->save($formation, true);
+            $formationRepository->save($formation, true);
 
-                return $this->redirectToRoute('app_formation_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_formation_index', [], Response::HTTP_SEE_OTHER);
 
         }
 
