@@ -62,7 +62,7 @@ class DonationsController extends AbstractController
         $session->set('amount_donated',$amount);
 
 
-        $email = (new TemplatedEmail());
+      /*  $email = (new TemplatedEmail());
 
         $email->subject('THANK YOU !');
         $email->from('apex.pidev1@gmail.com');
@@ -71,7 +71,7 @@ class DonationsController extends AbstractController
         $email->context([
         'amount' => $amount,
     ]);
-        $mailer->send($email);
+        $mailer->send($email);*/
 
         //dd($session->id);
 
